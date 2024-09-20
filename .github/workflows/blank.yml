@@ -1,0 +1,107 @@
+# Importer les bibliothèques nécessaires
+from flask import Flask, render_template, request
+import os
+
+# Créer l'application Flask
+app = Flask(__name__)
+
+# Créer le répertoire 'templates' s'il n'existe pas
+if not os.path.exists('templates'):
+    os.makedirs('templates')
+
+# Contenu HTML de base pour la page de réservation
+html_content = """
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réservation du CDI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-top: 10px;
+        }
+        input, select, button {
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #5cb85c;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Réservation du CDI</h1>
+        <form action="/submit_reservation" method="POST">
+            <label for="name">Nom :</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="date">Date de réservation :</label>
+            <input type="date" id="date" name="date" required>
+
+            <label for="time">Heure :</label>
+            <input type="time" id="time" name="time" required>
+
+            <label for="activity">Activité :</label>
+            <select id="activity" name="activity" required>
+                <option value="lecture">Lecture</option>
+                <option value="recherche">Recherche</option>
+                <option value="groupe_etude">Travail de groupe</option>
+            </select>
+
+            <button type="submit">Réserver</button>
+        </form>
+    </div>
+</body>
+</html>
+"""
+
+# Écrire le fichier HTML dans le répertoire 'templates'
+with open('templates/index.html', 'w') as file:
+    file.write(html_content)
+
+# Route principale pour afficher la page
+@app.route('/')
+def home():
+    return render_template('index.html')
+
+# Route pour gérer la soumission du formulaire
+@app.route('/submit_reservation', methods=['POST'])
+def submit_reservation():
+    name = request.form['name']
+    date = request.form['date']
+    time = request.form['time']
+    activity = request.form['activity']
+    
+    return f"Réservation confirmée pour {name} le {date} à {time} pour l'activité : {activity}."
+
+# Lancer l'application Flask
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=81)
+
